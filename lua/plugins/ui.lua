@@ -42,6 +42,8 @@ return {
     },
   },
 
+  { 'romgrk/barbar.nvim',     dependencies = 'nvim-tree/nvim-web-devicons' },
+
   {
     'lukas-reineke/indent-blankline.nvim',
     opts = {

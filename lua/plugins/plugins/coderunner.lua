@@ -23,4 +23,6 @@ return {
 			},
 		})
 	end
-}
+},
+
+vim.keymap.set("n", "<Leader>r", ":RunCode<CR>", { silent = true })

@@ -44,7 +44,7 @@ vim.o.timeoutlen = 300
 vim.o.completeopt = 'menuone,menuone,noselect'
 
 -- set finename at window top
-vim.o.winbar = '%f'
+-- vim.o.winbar = '%f'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
