@@ -1,0 +1,7 @@
+require('plugins.configs.gitsigns')
+require('plugins.configs.nvimtree')
+require('plugins.configs.treesitter')
+require('plugins.configs.lsp')
+require('plugins.configs.cmp')
+require('plugins.configs.telescope')
+require('plugins.configs.toggleterm')
