@@ -4,7 +4,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set highlight on search
-vim.o.hlsearch = false
+vim.o.hlsearch = true
 -- Wsc to no highlight search
 vim.keymap.set('n', '<esc>', "<cmd> noh <cr>", { desc = "ho highlight" })
 
