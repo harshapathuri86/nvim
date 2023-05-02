@@ -1,7 +1,0 @@
-require('plugins.configs.barbar')
-require('plugins.configs.gitsigns')
-require('plugins.configs.nvimtree')
-require('plugins.configs.telescope')
-require('plugins.configs.treesitter')
-require('plugins.configs.lsp')
-require('plugins.configs.toggleterm')

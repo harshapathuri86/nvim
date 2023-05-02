@@ -18,14 +18,13 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   -- basic plugins
-  require 'plugins.basic',
+  require 'harsha.plugins.utility',
   -- lsp related basic plugins
-  require 'plugins.lsp',
+  require 'harsha.plugins.autocomplete',
   -- other plugins
-  {import = "plugins.plugins" },
+  {import = "harsha.plugins.plugins" },
   -- ui related plugins
-  require 'plugins.ui'
+  require 'harsha.plugins.ui',
+  -- unnecessary fancy stuff
+  require 'harsha.plugins.fancy'
 }, {})
-
--- load configs for these plugins
-require("plugins.configs")

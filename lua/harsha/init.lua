@@ -1,0 +1,8 @@
+require("harsha.opts")
+require("harsha.plugins")
+require("harsha.plugins_config")
+require("harsha.autocommands")
+require("harsha.remap")
+require("harsha.colorscheme")
+require("harsha.lsp")
+-- require("harsha.dap")
