@@ -3,81 +3,81 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 
 local on_attach = function(_, bufnr)
-  if pcall(require, "lsp_signature") then
-    require("lsp_signature").on_attach({
+    if pcall(require, "lsp_signature") then
+        require("lsp_signature").on_attach({
             bind = true,
             handler_opts = {
                 border = "single",
             }
         }, bufnr)
-  end
+    end
 
-  -- local keymap_opts = {silet = true, buffer = true}
-  local keymap_opts = {buffer = bufnr}
+    -- local keymap_opts = {silet = true, buffer = true}
+    local keymap_opts = { buffer = bufnr }
 
-  -- vim.keymap.set('n','gD', vim.lsp.buf.declaration, { buffer = bufnr, desc = '[G]oto [D]eclaration'})
+    -- vim.keymap.set('n','gD', vim.lsp.buf.declaration, { buffer = bufnr, desc = '[G]oto [D]eclaration'})
 
-  vim.keymap.set("n", "gd", vim.lsp.buf.definition, keymap_opts)
-  vim.keymap.set("n", "gD", vim.lsp.buf.declaration, keymap_opts)
-  vim.keymap.set('n', "gr", require('telescope.builtin').lsp_references, keymap_opts)
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, keymap_opts)
+    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, keymap_opts)
+    vim.keymap.set('n', "gr", require('telescope.builtin').lsp_references, keymap_opts)
 
-  vim.keymap.set("n", "K", function()
-    vim.lsp.buf.hover()
-  end, keymap_opts)
+    vim.keymap.set("n", "K", function()
+        vim.lsp.buf.hover()
+    end, keymap_opts)
 
-  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, keymap_opts)
-  vim.keymap.set('n','<leader>rn', vim.lsp.buf.rename, keymap_opts)
-  vim.keymap.set('n','<leader>ca', vim.lsp.buf.code_action, keymap_opts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, keymap_opts)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, keymap_opts)
+    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, keymap_opts)
 
-  vim.keymap.set('n','<leader>ld', vim.lsp.buf.type_definition, keymap_opts)
-  vim.keymap.set('n','<leader>lds', require('telescope.builtin').lsp_document_symbols, keymap_opts)
-  vim.keymap.set('n','<leader>lws', require('telescope.builtin').lsp_dynamic_workspace_symbols, keymap_opts)
+    vim.keymap.set('n', '<leader>ld', vim.lsp.buf.type_definition, keymap_opts)
+    vim.keymap.set('n', '<leader>lds', require('telescope.builtin').lsp_document_symbols, keymap_opts)
+    vim.keymap.set('n', '<leader>lws', require('telescope.builtin').lsp_dynamic_workspace_symbols, keymap_opts)
 
-  vim.keymap.set('n','<C-k>', vim.lsp.buf.signature_help, keymap_opts)
+    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, keymap_opts)
 
-  vim.keymap.set("n", "<Leader>lf", vim.lsp.buf.format, keymap_opts)
+    vim.keymap.set("n", "<Leader>lf", vim.lsp.buf.format, keymap_opts)
 
-  -- Create a command `:Format` local to the LSP buffer
-  vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-    vim.lsp.buf.format()
-  end, { desc = 'Format current buffer with LSP' })
+    -- Create a command `:Format` local to the LSP buffer
+    vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
+        vim.lsp.buf.format()
+    end, { desc = 'Format current buffer with LSP' })
 end
 
 
 local servers = {
-  -- ltex = {},
-  grammarly = {
-    filetypes = {"markdown", "text"}
-  },
-  clangd = {
-  cmd = {
-    "clangd",
-    "--background-index",
-    "--cross-file-rename",
-    "--clang-tidy",
-    "--completion-style=bundled",
-  },
-  },
-  gopls = {},
-  pyright = {
-    cmd = { "pyright-langserver", "--stdio" },
-    filetypes = { "python" },
-    settings = {
-        python = {
-            analysis = {
-                autoSearchPaths = true,
-                diagnosticMode = "workspace",
-                useLibraryCodeForTypes = true,
+    -- ltex = {},
+    grammarly = {
+        filetypes = { "markdown", "text" }
+    },
+    clangd = {
+        cmd = {
+            "clangd",
+            "--background-index",
+            "--cross-file-rename",
+            "--clang-tidy",
+            "--completion-style=bundled",
+        },
+    },
+    gopls = {},
+    pyright = {
+        cmd = { "pyright-langserver", "--stdio" },
+        filetypes = { "python" },
+        settings = {
+            python = {
+                analysis = {
+                    autoSearchPaths = true,
+                    diagnosticMode = "workspace",
+                    useLibraryCodeForTypes = true,
+                },
             },
         },
     },
-  },
-  lua_ls = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
+    lua_ls = {
+        Lua = {
+            workspace = { checkThirdParty = false },
+            telemetry = { enable = false },
+        },
     },
-  },
 }
 
 if pcall(require, "rust-tools") then
@@ -89,7 +89,7 @@ if pcall(require, "rust-tools") then
             reload_workspace_from_cargo_toml = true,
             inlay_hints = {
                 auto = true,
-                only_current_line = true,
+                only_current_line = false,
                 show_parameter_hints = true,
                 parameter_hints_prefix = "<- ",
                 other_hints_prefix = "=> ",
@@ -172,15 +172,15 @@ require('mason').setup()
 local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
-  ensure_installed = vim.tbl_keys(servers),
+    ensure_installed = vim.tbl_keys(servers),
 }
 
 mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-    }
-  end,
+    function(server_name)
+        require('lspconfig')[server_name].setup {
+            capabilities = capabilities,
+            on_attach = on_attach,
+            settings = servers[server_name],
+        }
+    end,
 }
