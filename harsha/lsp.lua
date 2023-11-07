@@ -2,45 +2,82 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 
-local on_attach = function(_, bufnr)
-    if pcall(require, "lsp_signature") then
-        require("lsp_signature").on_attach({
-            bind = true,
-            handler_opts = {
-                border = "single",
-            }
-        }, bufnr)
+local on_attach = function(client, bufnr)
+    -- if pcall(require, "lsp_signature") then
+    --     require("lsp_signature").on_attach({
+    --         bind = true,
+    --         handler_opts = {
+    --             border = "single",
+    --         }
+    --     }, bufnr)
+    -- end
+
+    local nmap = function(keys, func, desc)
+        if desc then
+            desc = 'LSP: ' .. desc
+        end
+
+        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+    end
+    local imap = function(keys, func, desc)
+        if desc then
+            desc = 'LSP: ' .. desc
+        end
+
+        vim.keymap.set('i', keys, func, { buffer = bufnr, desc = desc })
     end
 
-    -- local keymap_opts = {silet = true, buffer = true}
-    local keymap_opts = { buffer = bufnr }
+    nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+    nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
-    -- vim.keymap.set('n','gD', vim.lsp.buf.declaration, { buffer = bufnr, desc = '[G]oto [D]eclaration'})
+    nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+    nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+    nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+    nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+    nmap('<leader>sds', require('telescope.builtin').lsp_document_symbols, '[S]earch [D]oc [S]ymbols')
+    nmap('<leader>sws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[S]earch [W]orkspace [S]ymbols')
+    nmap('<leader>li', vim.lsp.buf.incoming_calls, '[L]ist [I]ncoming calls')
+    nmap('<leader>lo', vim.lsp.buf.outgoing_calls, '[L]ist [O]utgoing calls')
 
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition, keymap_opts)
-    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, keymap_opts)
-    vim.keymap.set('n', "gr", require('telescope.builtin').lsp_references, keymap_opts)
+    -- See `:help K` for why this keymap
+    nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
-    vim.keymap.set("n", "K", function()
-        vim.lsp.buf.hover()
-    end, keymap_opts)
+    nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
+    nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+    nmap('<leader>wl', function()
+        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, '[W]orkspace [L]ist Folders')
 
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, keymap_opts)
-    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, keymap_opts)
-    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, keymap_opts)
 
-    vim.keymap.set('n', '<leader>ld', vim.lsp.buf.type_definition, keymap_opts)
-    vim.keymap.set('n', '<leader>lds', require('telescope.builtin').lsp_document_symbols, keymap_opts)
-    vim.keymap.set('n', '<leader>lws', require('telescope.builtin').lsp_dynamic_workspace_symbols, keymap_opts)
+    if client.server_capabilities.documentSymbolProvider then
+        require('nvim-navic').attach(client, bufnr)
+    end
 
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, keymap_opts)
+    if client.server_capabilities.inlayHintProvider then
+        vim.lsp.inlay_hint(bufnr, true)
+    end
 
-    vim.keymap.set("n", "<Leader>lf", vim.lsp.buf.format, keymap_opts)
+    vim.api.nvim_buf_create_user_command(
+        bufnr,
+        "Format",
+        function()
+            vim.lsp.buf.format()
+        end,
+        {}
+    )
 
-    -- Create a command `:Format` local to the LSP buffer
-    vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-        vim.lsp.buf.format()
-    end, { desc = 'Format current buffer with LSP' })
+
+    vim.api.nvim_create_autocmd(
+        { "BufWritePre" },
+        {
+            buffer = bufnr,
+            callback = function()
+                vim.lsp.buf.format()
+            end,
+        }
+    )
 end
 
 
@@ -72,12 +109,23 @@ local servers = {
             },
         },
     },
+    -- jdtls = {
+    --     java = {
+    --         inlayHints = {
+    --             parameterNames = {
+    --                 enabled = "all"
+    --             }
+    --         }
+    --     }
+    -- },
     lua_ls = {
         Lua = {
             workspace = { checkThirdParty = false },
             telemetry = { enable = false },
+            hint = { enable = true }
         },
     },
+    ocamllsp = {},
 }
 
 if pcall(require, "rust-tools") then
@@ -163,7 +211,9 @@ if pcall(require, "rust-tools") then
 end
 
 -- Setup neovim lua configuration
-require('neodev').setup()
+require('neodev').setup({
+    library = { plugins = { "nvim-dap-ui" }, types = true },
+})
 
 -- Setup mason so it can manage external tooling
 require('mason').setup()
@@ -177,10 +227,21 @@ mason_lspconfig.setup {
 
 mason_lspconfig.setup_handlers {
     function(server_name)
+        if server_name == 'jdtls' then
+            return
+        end
         require('lspconfig')[server_name].setup {
             capabilities = capabilities,
             on_attach = on_attach,
             settings = servers[server_name],
+            -- filetypes = (servers[server_name] or {}).filetypes,
         }
     end,
 }
+
+
+require('fidget').setup({
+    text = {
+        spinner = 'arc'
+    },
+})

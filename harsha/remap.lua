@@ -1,9 +1,13 @@
--- Navigating through splits
-vim.keymap.set("n", "<A-h>", "<C-w><C-h>", { silent = true })
-vim.keymap.set("n", "<A-j>", "<C-w><C-j>", { silent = true })
-vim.keymap.set("n", "<A-k>", "<C-w><C-k>", { silent = true })
-vim.keymap.set("n", "<A-l>", "<C-w><C-l>", { silent = true })
+vim.keymap.set("n", "//", ":set nohlsearch<CR>", { silent = true })
 
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { silent = true })
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { silent = true })
+
+-- Navigating through splits
+vim.keymap.set("n", "<M-h>", "<C-w><C-h>", { silent = true })
+vim.keymap.set("n", "<M-j>", "<C-w><C-j>", { silent = true })
+vim.keymap.set("n", "<M-k>", "<C-w><C-k>", { silent = true })
+vim.keymap.set("n", "<M-l>", "<C-w><C-l>", { silent = true })
 
 -- Resizing splits
 vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { silent = true })
@@ -18,7 +22,7 @@ vim.keymap.set("n", "<Leader>sc", ":set spell!<CR>", { silent = true })
 
 -- System clipboard
 vim.keymap.set({ "n", "v" }, "<Leader>y", [["+y]], { silent = true })
-vim.keymap.set({ "n", "v" }, "<Leader>p", [["+p]], { silent = true })
+-- vim.keymap.set({ "n", "v" }, "<Leader>p", [["+p]], { silent = true })
 
 
 -- Centering stuff
@@ -30,10 +34,10 @@ vim.keymap.set("n", "``", "``zzzv", { silent = true })
 
 
 -- Moving around in insert mode
-vim.keymap.set("i", "<A-h>", "<Left>", { silent = true })
-vim.keymap.set("i", "<A-j>", "<Down>", { silent = true })
-vim.keymap.set("i", "<A-k>", "<Up>", { silent = true })
-vim.keymap.set("i", "<A-l>", "<Right>", { silent = true })
+vim.keymap.set("i", "<M-h>", "<Left>", { silent = true })
+vim.keymap.set("i", "<M-j>", "<Down>", { silent = true })
+vim.keymap.set("i", "<M-k>", "<Up>", { silent = true })
+vim.keymap.set("i", "<M-l>", "<Right>", { silent = true })
 
 
 -- Indentation
@@ -86,9 +90,3 @@ vim.keymap.set('t', '<leader>w', [[<C-\><C-n><C-w>]], opts)
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)

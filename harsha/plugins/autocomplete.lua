@@ -1,11 +1,14 @@
 return {
 
+
   {
     'neovim/nvim-lspconfig',
     dependencies = {
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
-      -- { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim',
+        tag = "legacy",
+      },
       'folke/neodev.nvim',
     },
   },
@@ -26,11 +29,15 @@ return {
 
   "ray-x/lsp_signature.nvim",
 
-   -- "github/copilot.vim" ,
    "zbirenbaum/copilot.lua" ,
 
-  -- language specific
   { "simrat39/rust-tools.nvim",
     ft = {"rust", "toml"},
   },
+
+  {'mfussenegger/nvim-jdtls'},
+
+  {'mfussenegger/nvim-dap'},
+
+  {'rcarriga/nvim-dap-ui'}
 }

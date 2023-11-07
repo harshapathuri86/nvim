@@ -38,40 +38,34 @@ require('gitsigns').setup {
   on_attach = function(bufnr)
     local gs = package.loaded.gitsigns
 
-    local function map(mode, l, r, opts)
-      opts = opts or {}
-      opts.buffer = bufnr
-      vim.keymap.set(mode, l, r, opts)
-    end
-
     -- Navigation
-    map('n', ']c', function()
+    vim.keymap.set('n', ']c', function()
       if vim.wo.diff then return ']c' end
       vim.schedule(function() gs.next_hunk() end)
       return '<Ignore>'
-    end, { expr = true })
+    end, {buffer = bufnr,  expr = true, desc="next hunk" })
 
-    map('n', '[c', function()
+    vim.keymap.set('n', '[c', function()
       if vim.wo.diff then return '[c' end
       vim.schedule(function() gs.prev_hunk() end)
       return '<Ignore>'
-    end, { expr = true })
+    end, {buffer = bufnr,  expr = true , desc="prev hunk"})
 
     -- Actions
-    map({ 'n', 'v' }, '<leader>hs', ':Gitsigns stage_hunk<CR>')
-    map({ 'n', 'v' }, '<leader>hr', ':Gitsigns reset_hunk<CR>')
-    map('n', '<leader>hS', gs.stage_buffer)
-    map('n', '<leader>hu', gs.undo_stage_hunk)
-    map('n', '<leader>hR', gs.reset_buffer)
-    map('n', '<leader>hp', gs.preview_hunk)
-    map('n', '<leader>hb', function() gs.blame_line { full = true } end)
-    map('n', '<leader>tb', gs.toggle_current_line_blame)
-    map('n', '<leader>hd', gs.diffthis)
-    map('n', '<leader>hD', function() gs.diffthis('~') end)
-    map('n', '<leader>td', gs.toggle_deleted)
+    vim.keymap.set({ 'n', 'v' }, '<leader>hs', ':Gitsigns stage_hunk<CR>', { buffer = bufnr, desc="[H]unk [S]tage"})
+    vim.keymap.set({ 'n', 'v' }, '<leader>hr', ':Gitsigns reset_hunk<CR>', {buffer = bufnr, desc="[H]unk [R]eset"})
+    vim.keymap.set('n', '<leader>hS', gs.stage_buffer, {buffer = bufnr, desc="[H]unk [S]tage buffer"})
+    vim.keymap.set('n', '<leader>hu', gs.undo_stage_hunk, {desc="[H]unk [U]ndo"})
+    vim.keymap.set('n', '<leader>hR', gs.reset_buffer, {buffer = bufnr, desc="[H]unk [R]eset buffer"})
+    vim.keymap.set('n', '<leader>hp', gs.preview_hunk, {buffer = bufnr, desc="[H]unk [P]review"})
+    vim.keymap.set('n', '<leader>hb', function() gs.blame_line { full = true } end, {buffer = bufnr, desc="[H]unk [B]lame line"})
+    vim.keymap.set('n', '<leader>tb', gs.toggle_current_line_blame, {buffer = bufnr, desc="[T]oggle [B]lame line"})
+    vim.keymap.set('n', '<leader>hd', gs.diffthis, {buffer = bufnr, desc="[H]unk [D]iff"})
+    vim.keymap.set('n', '<leader>hD', function() gs.diffthis('~') end, {buffer = bufnr, desc="[H]unk [D]iff ~"})
+    vim.keymap.set('n', '<leader>td', gs.toggle_deleted, {buffer = bufnr, desc="[T]oggle hunk [D]elete "})
 
     -- Text object
-    map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+    vim.keymap.set({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', {buffer = bufnr, desc="select hunk"})
   end,
   watch_gitdir = {
     interval = 2000,

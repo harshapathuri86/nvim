@@ -7,7 +7,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
-cursor_line_group = vim.api.nvim_create_augroup("cursor_line", { clear = true })
+--[[ cursor_line_group = vim.api.nvim_create_augroup("cursor_line", { clear = true })
 vim.api.nvim_create_autocmd("InsertEnter", {
     pattern = "*",
     group = cursor_line_group,
@@ -21,7 +21,7 @@ vim.api.nvim_create_autocmd("InsertLeave", {
     callback = function()
         vim.opt_local.cursorline = false
     end,
-})
+}) ]]
 
 buf_enter_group = vim.api.nvim_create_augroup("buf_enter", { clear = true })
 vim.api.nvim_create_autocmd("BufEnter", {
