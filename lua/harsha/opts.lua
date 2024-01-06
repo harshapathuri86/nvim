@@ -3,7 +3,12 @@ vim.opt.relativenumber = true
 vim.opt.encoding = "utf-8"
 vim.opt.fileencoding = "utf-8"
 vim.opt.mouse = "a"
-vim.opt.wrap = true
+vim.opt.wrap = false
+
+if vim.fn.has("nvim-0.10") == 1 then
+    vim.opt.smoothscroll = true
+end
+
 vim.opt.linebreak = true
 vim.opt.splitbelow = true
 vim.opt.splitright = true

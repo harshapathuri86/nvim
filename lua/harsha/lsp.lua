@@ -3,14 +3,14 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 
 local on_attach = function(client, bufnr)
-    -- if pcall(require, "lsp_signature") then
-    --     require("lsp_signature").on_attach({
-    --         bind = true,
-    --         handler_opts = {
-    --             border = "single",
-    --         }
-    --     }, bufnr)
-    -- end
+    if pcall(require, "lsp_signature") then
+        require("lsp_signature").on_attach({
+            bind = true,
+            handler_opts = {
+                border = "single",
+            }
+        }, bufnr)
+    end
 
     local nmap = function(keys, func, desc)
         if desc then
@@ -56,7 +56,7 @@ local on_attach = function(client, bufnr)
     end
 
     if client.server_capabilities.inlayHintProvider then
-        vim.lsp.inlay_hint(bufnr, true)
+        vim.lsp.inlay_hint.enable(bufnr, true)
     end
 
     vim.api.nvim_buf_create_user_command(

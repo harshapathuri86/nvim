@@ -10,6 +10,7 @@ return {
     priority = 1000
   },
 
+  { "catppuccin/nvim",          name = "catppuccin",                         priority = 1000 },
   { 'rose-pine/neovim',         name = 'rose-pine' },
 
   { 'nvim-lualine/lualine.nvim' },
@@ -19,8 +20,7 @@ return {
   {
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',
-    opts = {
-    },
+    opts = {},
   },
 
   { 'SmiteshP/nvim-navic' },
