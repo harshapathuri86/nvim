@@ -3,7 +3,7 @@ require('nvim-treesitter.configs').setup {
   ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'vim' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-  auto_install = false,
+  auto_install = true,
 
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
@@ -56,8 +56,8 @@ require('nvim-treesitter.configs').setup {
         [']i'] = '@conditional.outer',
         [']l'] = '@loop.outer',
         [']c'] = '@class.outer',
-        [']s'] = {query = '@scope', query_group = 'locals'},
-        [']z'] = {query = '@fold', query_group = 'folds'},
+        [']s'] = { query = '@scope', query_group = 'locals' },
+        [']z'] = { query = '@fold', query_group = 'folds' },
       },
       goto_next_end = {
         [']F'] = '@call.outer',
@@ -99,10 +99,10 @@ require('nvim-treesitter.configs').setup {
 
 local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move");
 
-vim.keymap.set({'n','x','o'}, ';', ts_repeat_move.repeat_last_move);
-vim.keymap.set({'n','x','o'}, ',', ts_repeat_move.repeat_last_move_opposite);
+vim.keymap.set({ 'n', 'x', 'o' }, ';', ts_repeat_move.repeat_last_move);
+vim.keymap.set({ 'n', 'x', 'o' }, ',', ts_repeat_move.repeat_last_move_opposite);
 
-vim.keymap.set({'n','x','o'}, 'f', ts_repeat_move.builtin_f);
-vim.keymap.set({'n','x','o'}, 'F', ts_repeat_move.builtin_F);
-vim.keymap.set({'n','x','o'}, 't', ts_repeat_move.builtin_t);
-vim.keymap.set({'n','x','o'}, 'T', ts_repeat_move.builtin_T);
+vim.keymap.set({ 'n', 'x', 'o' }, 'f', ts_repeat_move.builtin_f);
+vim.keymap.set({ 'n', 'x', 'o' }, 'F', ts_repeat_move.builtin_F);
+vim.keymap.set({ 'n', 'x', 'o' }, 't', ts_repeat_move.builtin_t);
+vim.keymap.set({ 'n', 'x', 'o' }, 'T', ts_repeat_move.builtin_T);

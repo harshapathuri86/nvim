@@ -7,6 +7,7 @@ require("harsha.colorscheme")
 require("harsha.lsp")
 -- require("harsha.dap")
 
+
 -- jdtls
 local java_cmds = vim.api.nvim_create_augroup('java_cmds', { clear = true })
 local cache_vars = {}
@@ -220,13 +221,13 @@ local function jdtls_setup(event)
     '-Declipse.product=org.eclipse.jdt.ls.core.product',
     '-Dlog.protocol=true',
     '-Dlog.level=ALL',
-    '-javaagent:' .. path.java_agent,
     '-Xms1g',
     '--add-modules=ALL-SYSTEM',
     '--add-opens',
     'java.base/java.util=ALL-UNNAMED',
     '--add-opens',
     'java.base/java.lang=ALL-UNNAMED',
+    '-javaagent:' .. path.java_agent,
     '-jar',
     path.launcher_jar,
     '-configuration',
@@ -324,12 +325,22 @@ local function jdtls_setup(event)
   })
 end
 
-vim.api.nvim_create_autocmd('FileType', {
-  group = java_cmds,
-  pattern = { 'java' },
-  desc = 'Setup jdtls',
-  callback = jdtls_setup,
-})
+
+vim.keymap.set('n', '<leader>co', "<Cmd>lua require'jdtls'.organize_imports()<CR>", { desc = 'Organize Imports' })
+vim.keymap.set('n', '<leader>crv', "<Cmd>lua require('jdtls').extract_variable()<CR>", { desc = 'Extract Variable' })
+vim.keymap.set('v', '<leader>crv', "<Esc><Cmd>lua require('jdtls').extract_variable(true)<CR>",
+  { desc = 'Extract Variable' })
+vim.keymap.set('n', '<leader>crc', "<Cmd>lua require('jdtls').extract_constant()<CR>", { desc = 'Extract Constant' })
+vim.keymap.set('v', '<leader>crc', "<Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>",
+  { desc = 'Extract Constant' })
+vim.keymap.set('v', '<leader>crm', "<Esc><Cmd>lua require('jdtls').extract_method(true)<CR>", { desc = 'Extract Method' })
+
+-- vim.api.nvim_create_autocmd('FileType', {
+--   group = java_cmds,
+--   pattern = { 'java' },
+--   desc = 'Setup jdtls',
+--   callback = jdtls_setup,
+-- })
 local dap = require('dap')
 
 dap.configurations.java = {

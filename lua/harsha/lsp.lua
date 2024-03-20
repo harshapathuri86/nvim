@@ -3,15 +3,6 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 
 local on_attach = function(client, bufnr)
-    if pcall(require, "lsp_signature") then
-        require("lsp_signature").on_attach({
-            bind = true,
-            handler_opts = {
-                border = "single",
-            }
-        }, bufnr)
-    end
-
     local nmap = function(keys, func, desc)
         if desc then
             desc = 'LSP: ' .. desc
@@ -26,6 +17,16 @@ local on_attach = function(client, bufnr)
 
         vim.keymap.set('i', keys, func, { buffer = bufnr, desc = desc })
     end
+
+    if pcall(require, "lsp_signature") then
+        -- require("lsp_signature").on_attach({
+        --     bind = true,
+        --     handler_opts = {
+        --         border = "single",
+        --     }
+        -- }, bufnr)
+    end
+
 
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
@@ -42,7 +43,15 @@ local on_attach = function(client, bufnr)
 
     -- See `:help K` for why this keymap
     nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+    nmap('<C-h>', vim.lsp.buf.signature_help, 'Signature Documentation')
+    imap('<C-h>', vim.lsp.buf.signature_help, 'Signature Help')
+
+
+    nmap("]d", vim.diagnostic.goto_next, 'Diagnostic next')
+    nmap("[d", vim.diagnostic.goto_prev, 'Diagnostic prev')
+    nmap('<space>e', vim.diagnostic.open_float, 'Open Diagnostic')
+    nmap('<space>q', vim.diagnostic.setloclist, 'Diagnostic loclist')
+
 
     nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
     nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
@@ -82,10 +91,7 @@ end
 
 
 local servers = {
-    -- ltex = {},
-    grammarly = {
-        filetypes = { "markdown", "text" }
-    },
+    ltex = {},
     clangd = {
         cmd = {
             "clangd",
@@ -109,15 +115,7 @@ local servers = {
             },
         },
     },
-    -- jdtls = {
-    --     java = {
-    --         inlayHints = {
-    --             parameterNames = {
-    --                 enabled = "all"
-    --             }
-    --         }
-    --     }
-    -- },
+    jdtls = {},
     lua_ls = {
         Lua = {
             workspace = { checkThirdParty = false },

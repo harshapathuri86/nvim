@@ -33,7 +33,7 @@ vim.opt.list = true
 vim.opt.fillchars = { eob = " " }
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
-vim.opt.lazyredraw = true
+-- vim.opt.lazyredraw = true
 vim.opt.undofile = true
 vim.opt.hlsearch = true
 -- show 5 lines above and below coursor always

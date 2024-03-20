@@ -6,14 +6,26 @@ return {
 
 	{ 'numToStr/Comment.nvim',   opts = {} },
 
-	{
-		"nvim-tree/nvim-tree.lua",
-		version = "*",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-		},
-	},
+	-- {
+	-- 	"nvim-tree/nvim-tree.lua",
+	-- 	version = "*",
+	-- 	dependencies = {
+	-- 		"nvim-tree/nvim-web-devicons",
+	-- 	},
+	-- },
 
+
+	-- {
+	-- 	"nvim-neo-tree/neo-tree.nvim",
+	-- 	branch = "v3.x",
+	-- 	dependencies = {
+	-- 		"nvim-lua/plenary.nvim",
+	-- 		"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+	-- 		"MunifTanjim/nui.nvim",
+	-- 		-- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+	-- 	},
+	-- },
+	--
 	{ 'akinsho/toggleterm.nvim', version = "*", opts = {} },
 
 	{
@@ -122,57 +134,110 @@ return {
 		},
 	}, ]]
 
-	{
-		'goolord/alpha-nvim',
-		dependencies = { 'nvim-tree/nvim-web-devicons' },
-		config = function()
-			local alpha = require("alpha")
-			local dashboard = require("alpha.themes.dashboard")
+	--  {
+	-- 	'goolord/alpha-nvim',
+	-- 	dependencies = { 'nvim-tree/nvim-web-devicons' },
+	-- 	config = function()
+	-- 		local alpha = require("alpha")
+	-- 		local dashboard = require("alpha.themes.dashboard")
+	--
+	-- 		dashboard.section.header.val = {
+	-- 			[[                                                                       ]],
+	-- 			[[                                                                       ]],
+	-- 			[[                                                                       ]],
+	-- 			[[                                                                     ]],
+	-- 			[[       ████ ██████           █████      ██                     ]],
+	-- 			[[      ███████████             █████                             ]],
+	-- 			[[      █████████ ███████████████████ ███   ███████████   ]],
+	-- 			[[     █████████  ███    █████████████ █████ ██████████████   ]],
+	-- 			[[    █████████ ██████████ █████████ █████ █████ ████ █████   ]],
+	-- 			[[  ███████████ ███    ███ █████████ █████ █████ ████ █████  ]],
+	-- 			[[ ██████  █████████████████████ ████ █████ █████ ████ ██████ ]],
+	-- 			[[                                                                       ]],
+	-- 			[[                                                                       ]],
+	-- 		}
+	--
+	-- 		_Gopts = {
+	-- 			position = "center",
+	-- 			hl = "Type",
+	-- 			-- wrap = "overflow";
+	-- 		}
+	--
+	-- 		local function footer()
+	-- 			return "Haskell can suck mo' nads"
+	-- 		end
+	--
+	-- 		dashboard.section.footer.val = footer()
+	--
+	-- 		dashboard.button = {
+	-- 			type = "button",
+	-- 			val = "",
+	-- 		}
+	--
+	-- 		dashboard.opts.opts.noautocmd = true
+	-- 		alpha.setup(dashboard.opts)
+	-- 	end
+	-- } ,
 
-			dashboard.section.header.val = {
-				[[                                                                       ]],
-				[[                                                                       ]],
-				[[                                                                       ]],
-				[[                                                                       ]],
-				[[                                                                       ]],
-				[[                                                                       ]],
-				[[                                                                       ]],
-				[[                                                                     ]],
-				[[       ████ ██████           █████      ██                     ]],
-				[[      ███████████             █████                             ]],
-				[[      █████████ ███████████████████ ███   ███████████   ]],
-				[[     █████████  ███    █████████████ █████ ██████████████   ]],
-				[[    █████████ ██████████ █████████ █████ █████ ████ █████   ]],
-				[[  ███████████ ███    ███ █████████ █████ █████ ████ █████  ]],
-				[[ ██████  █████████████████████ ████ █████ █████ ████ ██████ ]],
-				[[                                                                       ]],
-				[[                                                                       ]],
-				[[                                                                       ]],
-			}
-
-			_Gopts = {
-				position = "center",
-				hl = "Type",
-				-- wrap = "overflow";
-			}
-
-			local function footer()
-				return "Haskell can suck mo' nads"
-			end
-
-			dashboard.section.footer.val = footer()
-
-			dashboard.opts.opts.noautocmd = true
-			alpha.setup(dashboard.opts)
-		end
-	},
 	{ 'simrat39/symbols-outline.nvim' },
 
+	{ "folke/trouble.nvim" },
+	dependencies = { "nvim-tree/nvim-web-devicons" },
+	opts = {
+	},
+
+
 	{
-		"kdheepak/lazygit.nvim",
-		-- optional for floating window border decoration
-		dependencies = {
-			"nvim-lua/plenary.nvim",
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		---@type Flash.Config
+		opts = {},
+		-- stylua: ignore
+		keys = {
+			{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+			{
+				"S",
+				mode = { "n", "x", "o" },
+				function() require("flash").treesitter() end,
+				desc =
+				"Flash Treesitter"
+			},
+			{
+				"r",
+				mode = "o",
+				function() require("flash").remote() end,
+				desc =
+				"Remote Flash"
+			},
+			{
+				"R",
+				mode = { "o", "x" },
+				function() require("flash").treesitter_search() end,
+				desc =
+				"Treesitter Search"
+			},
+			{
+				"<c-s>",
+				mode = { "c" },
+				function() require("flash").toggle() end,
+				desc =
+				"Toggle Flash Search"
+			},
 		},
 	},
+
+	{
+		"folke/todo-comments.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = {
+		}
+	},
+
+	{
+		"folke/persistence.nvim",
+		event = "BufReadPre", -- this will only start session saving when an actual file was opened
+		opts = {
+		}
+	}
+
 }

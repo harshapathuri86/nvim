@@ -1,7 +1,4 @@
-vim.keymap.set("n", "<space>nh", ":set nohlsearch<CR>", { silent = true })
-
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { silent = true })
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { silent = true })
+vim.keymap.set("n", "<space>nn", ":set nohlsearch<CR>", { silent = true })
 
 -- Navigating through splits
 vim.keymap.set("n", "<M-h>", "<C-w><C-h>", { silent = true })
@@ -90,3 +87,16 @@ vim.keymap.set('t', '<leader>w', [[<C-\><C-n><C-w>]], opts)
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+
+
+vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { silent = true })
+vim.keymap.set("n", "J", "mzJ`z", { silent = true })
+vim.keymap.set("n", "C-d", "<C-d>zz")
+vim.keymap.set("n", "C-u", "<C-u>zz")
+vim.keymap.set("n", "n", "nzzzv", { silent = true })
+vim.keymap.set("n", "N", "Nzzzv", { silent = true })
+vim.keymap.set("x", "<leader>p", [["_dP]])
+
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { silent = true })
