@@ -1,4 +1,5 @@
 vim.keymap.set("n", "<space>nn", ":set nohlsearch<CR>", { silent = true })
+vim.keymap.set("n", "<space>bd", ":bdelete<CR>", { silent = true })
 
 -- Navigating through splits
 vim.keymap.set("n", "<M-h>", "<C-w><C-h>", { silent = true })
@@ -100,3 +101,9 @@ vim.keymap.set("n", "N", "Nzzzv", { silent = true })
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { silent = true })
+
+-- Quickly re-select pasted text
+vim.keymap.set("n", "gp", "`[v`]", { silent = true })
+
+
+vim.keymap.set("v", "//", "y/\\V<C-R>=escape(@\",'/\')<CR><CR>", { silent = true })

@@ -21,6 +21,10 @@ return {
     dependencies = {
       "folke/twilight.nvim",
     }
-  }
+  },
 
+  {
+    "nacro90/numb.nvim",
+    opts = {}
+  }
 }

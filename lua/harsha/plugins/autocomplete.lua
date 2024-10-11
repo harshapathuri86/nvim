@@ -5,6 +5,7 @@ return {
     'neovim/nvim-lspconfig',
     dependencies = {
       'williamboman/mason.nvim',
+      'nvim-java/nvim-java',
       'williamboman/mason-lspconfig.nvim',
       {
         'j-hui/fidget.nvim',
@@ -41,16 +42,18 @@ return {
   --   end
   -- },
   --
-  "zbirenbaum/copilot.lua",
+  -- "zbirenbaum/copilot.lua",
+  -- "github/copilot.vim",
+
+  {
+    "supermaven-inc/supermaven-nvim",
+    config = function()
+      require("supermaven-nvim").setup({})
+    end
+  },
 
   {
     "simrat39/rust-tools.nvim",
     ft = { "rust", "toml" },
   },
-
-  { 'mfussenegger/nvim-jdtls' },
-
-  { 'mfussenegger/nvim-dap' },
-
-  { 'rcarriga/nvim-dap-ui' }
 }

@@ -87,7 +87,7 @@ vim.cmd.colorscheme "tokyonight"
 -- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 -- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 
-require('lualine').setup {
+require("lualine").setup({
 	options = {
 		icons_enabled = true,
 		component_separators = { left = '', right = '' },
@@ -95,5 +95,14 @@ require('lualine').setup {
 		section_separators = { left = '', right = '' },
 		section_separators = { left = '', right = '' },
 		component_separators = { left = '|', right = '|' },
-	}
-}
+	},
+  sections = {
+    lualine_x = {
+      {
+        require("noice").api.statusline.mode.get,
+        cond = require("noice").api.statusline.mode.has,
+        color = { fg = "#ff9e64" },
+      }
+    },
+  },
+})

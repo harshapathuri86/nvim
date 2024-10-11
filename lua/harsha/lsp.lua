@@ -36,8 +36,8 @@ local on_attach = function(client, bufnr)
     nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
     nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
     nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-    nmap('<leader>sds', require('telescope.builtin').lsp_document_symbols, '[S]earch [D]oc [S]ymbols')
-    nmap('<leader>sws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[S]earch [W]orkspace [S]ymbols')
+    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[S]earch [D]oc [S]ymbols')
+    nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[S]earch [W]orkspace [S]ymbols')
     nmap('<leader>li', vim.lsp.buf.incoming_calls, '[L]ist [I]ncoming calls')
     nmap('<leader>lo', vim.lsp.buf.outgoing_calls, '[L]ist [O]utgoing calls')
 
@@ -65,7 +65,7 @@ local on_attach = function(client, bufnr)
     end
 
     if client.server_capabilities.inlayHintProvider then
-        vim.lsp.inlay_hint.enable(bufnr, true)
+        vim.lsp.inlay_hint.enable(true)
     end
 
     vim.api.nvim_buf_create_user_command(
@@ -96,9 +96,12 @@ local servers = {
         cmd = {
             "clangd",
             "--background-index",
-            "--cross-file-rename",
+            "--suggest-missing-includes",
             "--clang-tidy",
-            "--completion-style=bundled",
+            "--header-insertion=iwyu",
+            "--cross-file-rename",
+            "-isystem",
+            "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/",
         },
     },
     gopls = {},
@@ -226,7 +229,13 @@ mason_lspconfig.setup {
 mason_lspconfig.setup_handlers {
     function(server_name)
         if server_name == 'jdtls' then
-            return
+            require('java').setup {
+                -- Your custom jdtls settings goes here
+            }
+
+            require('lspconfig').jdtls.setup {
+                -- Your custom nvim-java configuration goes here
+            }
         end
         require('lspconfig')[server_name].setup {
             capabilities = capabilities,

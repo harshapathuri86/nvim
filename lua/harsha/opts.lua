@@ -1,3 +1,5 @@
+-- vkm.g.copilot_proxy_strict_ssl = false
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.encoding = "utf-8"
@@ -5,9 +7,7 @@ vim.opt.fileencoding = "utf-8"
 vim.opt.mouse = "a"
 vim.opt.wrap = false
 
-if vim.fn.has("nvim-0.10") == 1 then
-    vim.opt.smoothscroll = true
-end
+vim.opt.smoothscroll = true
 
 vim.opt.linebreak = true
 vim.opt.splitbelow = true
@@ -44,7 +44,7 @@ vim.opt.pumheight = 20
 -- Decrease update time
 vim.opt.updatetime = 250
 vim.opt.timeout = true
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 500
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = ' '

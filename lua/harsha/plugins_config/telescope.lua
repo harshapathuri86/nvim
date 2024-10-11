@@ -31,8 +31,13 @@ telescope.setup({
       },
     },
     defaults = {
-      layout_strategy = 'center',
-      layout_config = { height = 0.95 },
+      -- layout_strategy = 'vertical',
+      -- layout_config = { height = 0.95 },
+    },
+    pickers = {
+      find_files = {
+        theme = "ivy"
+      }
     },
     file_ignore_patterns = {
       "node_modules/.*",
@@ -43,7 +48,12 @@ telescope.setup({
   extensions = {
     file_browser = {
       hijack_netrw = false,
-    }
+    },
+    -- ["ui-select"] = {
+    --   require("telescope.themes").get_ivy {
+    --     -- even more opts
+    --   }
+    -- },
   }
 })
 
@@ -51,10 +61,11 @@ telescope.setup({
 telescope.load_extension('fzf')
 telescope.load_extension('live_grep_args')
 telescope.load_extension('noice')
-
+telescope.load_extension('project')
+-- telescope.load_extension('ui-select')
 
 if pcall(require, "telescope-live-grep-args.actions") then
-  vim.keymap.set("n", "<Leader>sl", telescope.extensions.live_grep_args.live_grep_args, { silent = true })
+  vim.keymap.set("n", "<Leader>sa", telescope.extensions.live_grep_args.live_grep_args, { silent = true })
 end
 
 if pcall(telescope.load_extension, 'file_browser') then
@@ -97,3 +108,4 @@ vim.keymap.set('n', '<leader>sR', require('telescope.builtin').resume, { desc = 
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').lsp_references, { desc = '[F]ind [R]eferences' })
 
 vim.keymap.set("n", "<leader>t", ":Telescope <CR>")
+vim.keymap.set("n", "<leader>p", ":Telescope projects<CR>")
