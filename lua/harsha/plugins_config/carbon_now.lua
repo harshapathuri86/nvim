@@ -1,3 +1,8 @@
+if not pcall(require, "carbon-now") then
+    return
+end
+
+
 require("carbon-now").setup({
     base_url = "https://carbon.now.sh/",
     open_cmd = "xdg-open",

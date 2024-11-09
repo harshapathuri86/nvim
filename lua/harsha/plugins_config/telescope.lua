@@ -1,3 +1,7 @@
+if not pcall(require, "telescope") then
+  return
+end
+
 local telescope = require('telescope')
 local telescope_builtin = require('telescope.builtin')
 local actions = require "telescope.actions"
@@ -60,7 +64,10 @@ telescope.setup({
 -- Enable extensions if installed
 telescope.load_extension('fzf')
 telescope.load_extension('live_grep_args')
-telescope.load_extension('noice')
+if pcall(require, "noice") then
+  telescope.load_extension('noice')
+end
+
 telescope.load_extension('project')
 -- telescope.load_extension('ui-select')
 

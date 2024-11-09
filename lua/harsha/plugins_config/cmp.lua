@@ -1,3 +1,7 @@
+if not pcall(require, "cmp") then
+  return
+end
+
 local cmp = require 'cmp'
 local lspkind = require 'lspkind'
 local luasnip = require 'luasnip'
@@ -6,11 +10,11 @@ local pumvisible = vim.fn.pumvisible
 
 vim.opt.shortmess:append "c"
 
-
 require("luasnip").config.set_config({ history = true, updateevents = "TextChanged,TextChangedI" })
 
 -- lazy load snippets from friendly-snippets to luasnip
 require("luasnip.loaders.from_vscode").lazy_load()
+
 
 local has_words_before = function()
   unpack = unpack or table.unpack

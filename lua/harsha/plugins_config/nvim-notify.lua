@@ -1,3 +1,7 @@
+if not pcall(require, "notify") then
+    return
+end
+
 local notify = require("notify")
 
 notify.setup({

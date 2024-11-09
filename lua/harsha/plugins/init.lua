@@ -22,7 +22,7 @@ require('lazy').setup({
   -- lsp related basic plugins
   require 'harsha.plugins.autocomplete',
   -- other plugins
-  {import = "harsha.plugins.plugins" },
+  { import = "harsha.plugins.plugins" },
   -- ui related plugins
   require 'harsha.plugins.ui',
   -- unnecessary fancy stuff

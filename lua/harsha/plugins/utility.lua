@@ -295,6 +295,9 @@ return {
 			arg = "leet",
 			lang = "python3",
 			image_support = true,
+			plugins = {
+				non_standalone = true,
+			}
 		},
 	},
 

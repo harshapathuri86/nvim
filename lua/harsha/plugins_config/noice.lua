@@ -1,3 +1,7 @@
+if not pcall(require, "noice") then
+    return
+end
+
 require("noice").setup({
     messages = {
         -- NOTE: If you enable messages, then the cmdline is enabled automatically.
