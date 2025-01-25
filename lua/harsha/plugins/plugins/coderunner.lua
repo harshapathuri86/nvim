@@ -21,7 +21,7 @@ return {
 					typescript = "deno run",
 					rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt",
 					cpp = "cd $dir && g++ -std=c++17 $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
-					ocaml = "cd $dir && ocamlc -o $fileNameWithoutExt $fileName && $dir/$fileNameWithoutExt",
+					-- ocaml = "cd $dir && ocamlc -o $fileNameWithoutExt $fileName && $dir/$fileNameWithoutExt",
 					zig = "cd $dir && zig build run"
 				},
 			})

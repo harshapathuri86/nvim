@@ -130,7 +130,7 @@ local servers = {
             hint = { enable = true }
         },
     },
-    ocamllsp = {},
+    -- ocamllsp = {},
 }
 
 if pcall(require, "rust-tools") then
@@ -233,9 +233,9 @@ mason_lspconfig.setup {
 mason_lspconfig.setup_handlers {
     function(server_name)
         if server_name == 'jdtls' then
-            require('java').setup {
-                -- Your custom jdtls settings goes here
-            }
+            -- require('java').setup {
+            --     -- Your custom jdtls settings goes here
+            -- }
 
             require('lspconfig').jdtls.setup {
                 -- Your custom nvim-java configuration goes here

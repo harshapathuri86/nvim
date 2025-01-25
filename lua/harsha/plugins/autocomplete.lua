@@ -5,7 +5,7 @@ return {
     'neovim/nvim-lspconfig',
     dependencies = {
       'williamboman/mason.nvim',
-      'nvim-java/nvim-java',
+      -- 'nvim-java/nvim-java',
       'williamboman/mason-lspconfig.nvim',
       {
         'j-hui/fidget.nvim',
