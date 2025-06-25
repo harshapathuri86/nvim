@@ -1,258 +1,348 @@
-if not pcall(require, "cmp_nvim_lsp") then
+local M = {}
+
+-- Modern LSP configuration for Neovim
+-- Uses proper capabilities, better keymaps, and modern patterns
+
+-- Check if nvim-cmp is available
+local has_cmp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+if not has_cmp then
+    vim.notify("nvim-cmp not found, LSP capabilities will be limited", vim.log.levels.WARN)
     return
 end
 
+-- Enhanced capabilities with nvim-cmp
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+capabilities = cmp_lsp.default_capabilities(capabilities)
 
+-- Add folding capabilities
+capabilities.textDocument.foldingRange = {
+    dynamicRegistration = false,
+    lineFoldingOnly = true
+}
 
-local on_attach = function(client, bufnr)
-    local nmap = function(keys, func, desc)
-        if desc then
-            desc = 'LSP: ' .. desc
-        end
+-- Modern diagnostic configuration
+vim.diagnostic.config({
+    virtual_text = {
+        spacing = 4,
+        prefix = "●",
+        severity = { min = vim.diagnostic.severity.HINT }
+    },
+    signs = {
+        severity = { min = vim.diagnostic.severity.HINT }
+    },
+    underline = {
+        severity = { min = vim.diagnostic.severity.HINT }
+    },
+    float = {
+        border = "rounded",
+        source = "always",
+        header = "",
+        prefix = "",
+    },
+    severity_sort = true,
+    update_in_insert = false,
+})
 
-        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-    end
-    local imap = function(keys, func, desc)
-        if desc then
-            desc = 'LSP: ' .. desc
-        end
+-- Define diagnostic signs
+local signs = {
+    { name = "DiagnosticSignError", text = "" },
+    { name = "DiagnosticSignWarn", text = "" },
+    { name = "DiagnosticSignHint", text = "󰌵" },
+    { name = "DiagnosticSignInfo", text = "" },
+}
 
-        vim.keymap.set('i', keys, func, { buffer = bufnr, desc = desc })
-    end
-
-    if pcall(require, "lsp_signature") then
-        require("lsp_signature").on_attach({
-            bind = true,
-            handler_opts = {
-                border = "single",
-            }
-        }, bufnr)
-    end
-
-
-    nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-    nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-
-    nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-    nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-    nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-    nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[S]earch [D]oc [S]ymbols')
-    nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[S]earch [W]orkspace [S]ymbols')
-    nmap('<leader>li', vim.lsp.buf.incoming_calls, '[L]ist [I]ncoming calls')
-    nmap('<leader>lo', vim.lsp.buf.outgoing_calls, '[L]ist [O]utgoing calls')
-
-    -- See `:help K` for why this keymap
-    nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-    nmap('<C-h>', vim.lsp.buf.signature_help, 'Signature Documentation')
-    imap('<C-h>', vim.lsp.buf.signature_help, 'Signature Help')
-
-
-    nmap("]d", vim.diagnostic.goto_next, 'Diagnostic next')
-    nmap("[d", vim.diagnostic.goto_prev, 'Diagnostic prev')
-    nmap('<space>e', vim.diagnostic.open_float, 'Open Diagnostic')
-    nmap('<space>q', vim.diagnostic.setloclist, 'Diagnostic loclist')
-
-
-    nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-    nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-    nmap('<leader>wl', function()
-        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, '[W]orkspace [L]ist Folders')
-
-
-    if client.server_capabilities.documentSymbolProvider then
-        require('nvim-navic').attach(client, bufnr)
-    end
-
-    if client.server_capabilities.inlayHintProvider then
-        vim.lsp.inlay_hint.enable(true)
-    end
-
-    vim.api.nvim_buf_create_user_command(
-        bufnr,
-        "Format",
-        function()
-            vim.lsp.buf.format()
-        end,
-        {}
-    )
-
-
-    vim.api.nvim_create_autocmd(
-        { "BufWritePre" },
-        {
-            buffer = bufnr,
-            callback = function()
-                vim.lsp.buf.format()
-            end,
-        }
-    )
+for _, sign in ipairs(signs) do
+    vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = "" })
 end
 
+-- Modern on_attach function
+local function on_attach(client, bufnr)
+    -- Enable completion triggered by <c-x><c-o>
+    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+    
+    -- Keymaps
+    local opts = { buffer = bufnr, silent = true }
+    
+    -- Navigation
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+    vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, opts)
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+    vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, opts)
+    
+    -- Actions
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+    vim.keymap.set('x', '<leader>ca', vim.lsp.buf.code_action, opts)
+    
+    -- Documentation
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+    vim.keymap.set('i', '<C-h>', vim.lsp.buf.signature_help, opts)
+    
+    -- Diagnostics
+    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+    vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+    vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+    
+    -- Workspace
+    vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
+    vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+    vim.keymap.set('n', '<leader>wl', function()
+        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, opts)
+    
+    -- Formatting
+    if client.supports_method('textDocument/formatting') then
+        vim.keymap.set('n', '<leader>f', function()
+            vim.lsp.buf.format({ async = true })
+        end, opts)
+        
+        -- Format on save
+        vim.api.nvim_create_autocmd('BufWritePre', {
+            buffer = bufnr,
+            callback = function()
+                vim.lsp.buf.format({ async = false })
+            end,
+        })
+    end
+    
+    -- Inlay hints (Neovim 0.10+)
+    if client.supports_method('textDocument/inlayHint') then
+        vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+        vim.keymap.set('n', '<leader>th', function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+        end, opts)
+    end
+    
+    -- Document highlighting
+    if client.supports_method('textDocument/documentHighlight') then
+        local group = vim.api.nvim_create_augroup('lsp_document_highlight', { clear = false })
+        vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+            buffer = bufnr,
+            group = group,
+            callback = vim.lsp.buf.document_highlight,
+        })
+        vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+            buffer = bufnr,
+            group = group,
+            callback = vim.lsp.buf.clear_references,
+        })
+    end
+    
+    -- Navic breadcrumbs
+    if client.supports_method('textDocument/documentSymbol') then
+        local has_navic, navic = pcall(require, "nvim-navic")
+        if has_navic then
+            navic.attach(client, bufnr)
+        end
+    end
+end
 
+-- Server configurations
 local servers = {
-    ltex = {},
-    clangd = {
-        cmd = {
-            "clangd",
-            "--background-index",
-            "--suggest-missing-includes",
-            "--clang-tidy",
-            "--header-insertion=iwyu",
-            "--cross-file-rename",
-            "-isystem",
-            "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/",
+    -- Lua
+    lua_ls = {
+        settings = {
+            Lua = {
+                runtime = { version = 'LuaJIT' },
+                workspace = {
+                    checkThirdParty = false,
+                    library = {
+                        vim.env.VIMRUNTIME,
+                        "${3rd}/luv/library"
+                    }
+                },
+                completion = { callSnippet = 'Replace' },
+                telemetry = { enable = false },
+                hint = { enable = true },
+                diagnostics = { globals = { 'vim' } },
+            },
         },
     },
-    gopls = {},
+    
+    -- Python
     pyright = {
-        cmd = { "pyright-langserver", "--stdio" },
-        filetypes = { "python" },
         settings = {
             python = {
                 analysis = {
                     autoSearchPaths = true,
-                    diagnosticMode = "workspace",
+                    diagnosticMode = "openFilesOnly",
                     useLibraryCodeForTypes = true,
+                    typeCheckingMode = "basic"
                 },
             },
         },
     },
-    jdtls = {},
-    lua_ls = {
-        Lua = {
-            workspace = { checkThirdParty = false },
-            telemetry = { enable = false },
-            hint = { enable = true }
+    
+    -- Go
+    gopls = {
+        settings = {
+            gopls = {
+                completeUnimported = true,
+                usePlaceholders = true,
+                analyses = {
+                    unusedparams = true,
+                },
+                staticcheck = true,
+                gofumpt = true,
+            },
         },
     },
-    -- ocamllsp = {},
+    
+    -- C/C++
+    clangd = {
+        cmd = {
+            "clangd",
+            "--background-index",
+            "--clang-tidy",
+            "--header-insertion=iwyu",
+            "--completion-style=detailed",
+            "--function-arg-placeholders",
+            "--fallback-style=llvm",
+        },
+        init_options = {
+            usePlaceholders = true,
+            completeUnimported = true,
+            clangdFileStatus = true,
+        },
+    },
+    
+    -- JSON
+    jsonls = {
+        settings = {
+            json = {
+                schemas = pcall(require, 'schemastore') and require('schemastore').json.schemas() or {},
+                validate = { enable = true },
+            },
+        },
+    },
+    
+    -- YAML
+    yamlls = {
+        settings = {
+            yaml = {
+                schemaStore = {
+                    enable = false,
+                    url = "",
+                },
+                schemas = pcall(require, 'schemastore') and require('schemastore').yaml.schemas() or {},
+            },
+        },
+    },
+    
+    -- TypeScript/JavaScript
+    ts_ls = {
+        settings = {
+            typescript = {
+                inlayHints = {
+                    includeInlayParameterNameHints = 'all',
+                    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                    includeInlayFunctionParameterTypeHints = true,
+                    includeInlayVariableTypeHints = true,
+                    includeInlayPropertyDeclarationTypeHints = true,
+                    includeInlayFunctionLikeReturnTypeHints = true,
+                    includeInlayEnumMemberValueHints = true,
+                }
+            },
+            javascript = {
+                inlayHints = {
+                    includeInlayParameterNameHints = 'all',
+                    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                    includeInlayFunctionParameterTypeHints = true,
+                    includeInlayVariableTypeHints = true,
+                    includeInlayPropertyDeclarationTypeHints = true,
+                    includeInlayFunctionLikeReturnTypeHints = true,
+                    includeInlayEnumMemberValueHints = true,
+                }
+            }
+        }
+    },
 }
 
-if pcall(require, "rust-tools") then
-    local rt = require("rust-tools")
-    local opts = {
-        tools = {
-            executor = require("rust-tools.executors").termopen,
-            on_initialized = nil,
-            reload_workspace_from_cargo_toml = true,
-            inlay_hints = {
-                auto = true,
-                only_current_line = false,
-                show_parameter_hints = true,
-                parameter_hints_prefix = "<- ",
-                other_hints_prefix = "=> ",
-                max_len_align = false,
-                max_len_align_padding = 1,
-                right_align = false,
-                right_align_padding = 7,
-                highlight = "Comment",
-            },
-            hover_actions = {
-                border = {
-                    { "╭", "FloatBorder" },
-                    { "─", "FloatBorder" },
-                    { "╮", "FloatBorder" },
-                    { "│", "FloatBorder" },
-                    { "╯", "FloatBorder" },
-                    { "─", "FloatBorder" },
-                    { "╰", "FloatBorder" },
-                    { "│", "FloatBorder" },
-                },
-                max_width = nil,
-                max_height = nil,
-                auto_focus = false,
-            },
-            crate_graph = {
-                backend = "x11",
-                output = nil,
-                full = true,
-                enabled_graphviz_backends = { "bmp", "cgimage", "canon", "dot",
-                    "gv", "xdot", "xdot1.2", "xdot1.4", "eps", "exr",
-                    "fig", "gd", "gd2", "gif", "gtk", "ico", "cmap",
-                    "ismap", "imap", "cmapx", "imap_np", "cmapx_np",
-                    "jpg", "jpeg", "jpe", "jp2", "json", "json0", "dot_json",
-                    "xdot_json", "pdf", "pic", "pct", "pict", "plain",
-                    "plain-ext", "png", "pov", "ps", "ps2", "psd", "sgi",
-                    "svg", "svgz", "tga", "tiff", "tif", "tk", "vml", "vmlz",
-                    "wbmp", "webp", "xlib", "x11",
-                },
-            },
-        },
-        server = {
-            standalone = true,
-            on_attach = on_attach,
-            capabilities = require("cmp_nvim_lsp").default_capabilities(),
-            settings = {
-                ["rust-analyzer"] = {
-                    procMacro = {
-                        enable = true,
-                        attributes = { enabled = true, }
-                    },
-                    checkOnSave = {
-                        allFeatures = true,
-                        overrideCommand = {
-                            "cargo", "clippy", "--workspace", "--message-format=json",
-                            "--all-targets", "--all-features", "--no-deps",
-                        }
-                    }
-                },
-            },
-        },
-        dap = {
-            adapter = {
-                type = "executable",
-                command = "lldb-vscode",
-                name = "rt_lldb",
-            },
-        },
+-- Setup Mason
+require('mason').setup({
+    ui = {
+        border = "rounded",
+        icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗"
+        }
     }
+})
 
-    rt.setup(opts)
+-- Setup mason-lspconfig
+require('mason-lspconfig').setup({
+    ensure_installed = vim.tbl_keys(servers),
+    automatic_installation = true,
+})
+
+-- Setup LSP servers
+for server_name, config in pairs(servers) do
+    if server_name == 'jdtls' then
+        -- Java LSP is handled separately
+        goto continue
+    end
+    
+    local server_config = vim.tbl_deep_extend('force', {
+        capabilities = capabilities,
+        on_attach = on_attach,
+    }, config)
+    
+    require('lspconfig')[server_name].setup(server_config)
+    
+    ::continue::
 end
 
--- Setup neovim lua configuration
-require('neodev').setup({
-    library = { plugins = { "nvim-dap-ui" }, types = true },
-})
+-- Setup fidget for LSP progress
+local has_fidget, fidget = pcall(require, "fidget")
+if has_fidget then
+    fidget.setup({
+        progress = {
+            display = {
+                render_limit = 5,
+                done_ttl = 3,
+                done_icon = "✓",
+                done_style = "Constant",
+                group_style = "Title",
+                icon_style = "Question",
+                priority = 30,
+                skip_history = true,
+                format_message = function(msg)
+                    return msg.title
+                end,
+                format_annote = function(msg)
+                    return msg.message
+                end,
+                format_group_name = function(group)
+                    return tostring(group)
+                end,
+                overrides = {
+                    rust_analyzer = { name = "rust-analyzer" },
+                },
+            },
+        },
+        notification = {
+            window = {
+                normal_hl = "Comment",
+                winblend = 100,
+                border = "none",
+                zindex = 45,
+                max_width = 0,
+                max_height = 0,
+                x_padding = 1,
+                y_padding = 0,
+                align = "bottom",
+                relative = "editor",
+            },
+        },
+    })
+end
 
--- Setup mason so it can manage external tooling
-require('mason').setup()
+M.capabilities = capabilities
+M.on_attach = on_attach
+M.servers = servers
 
--- Ensure the servers above are installed
-local mason_lspconfig = require 'mason-lspconfig'
-
-mason_lspconfig.setup {
-    ensure_installed = vim.tbl_keys(servers),
-}
-
-mason_lspconfig.setup_handlers {
-    function(server_name)
-        if server_name == 'jdtls' then
-            -- require('java').setup {
-            --     -- Your custom jdtls settings goes here
-            -- }
-
-            require('lspconfig').jdtls.setup {
-                -- Your custom nvim-java configuration goes here
-            }
-        end
-        require('lspconfig')[server_name].setup {
-            capabilities = capabilities,
-            on_attach = on_attach,
-            settings = servers[server_name],
-            -- filetypes = (servers[server_name] or {}).filetypes,
-        }
-    end,
-}
-
-
-require('fidget').setup({
-    text = {
-        spinner = 'arc'
-    },
-})
+return M
