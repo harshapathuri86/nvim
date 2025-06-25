@@ -1,7 +1,7 @@
 if pcall(require, "tokyonight") then
 	require("tokyonight").setup({
 		style = "night", -- The theme comes in three styles, `storm`, `moon`, a darker variant `night` and `day`
-		transparent = true, -- Enable this to disable setting the background color
+		transparent = false, -- Enable this to disable setting the background color
 		-- terminal_colors = true, -- Configure the colors used when opening a `:terminal` in [Neovim](https://github.com/neovim/neovim)
 		styles = {
 			-- Style to be applied to different syntax groups
@@ -40,7 +40,7 @@ if pcall(require, "catppuccin") then
 			light = "latte",
 			dark = "mocha",
 		},
-		transparent_background = true, -- disables setting the background color.
+		transparent_background = false, -- disables setting the background color.
 		show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
 		term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
 		dim_inactive = {
@@ -86,8 +86,79 @@ if pcall(require, "catppuccin") then
 	})
 end
 
+if pcall(require, "rose-pine") then
+	require("rose-pine").setup({
+		variant = "main", -- auto, main, moon, or dawn
+		dark_variant = "main", -- main, moon, or dawn
+		dim_inactive_windows = false,
+		extend_background_behind_borders = true,
+		enable = {
+			terminal = true,
+			legacy_highlights = true, -- Improve compatibility for previous versions of Neovim
+			migrations = true, -- Handle deprecated options automatically
+		},
+		styles = {
+			bold = true,
+			italic = true,
+			transparency = false,
+		},
+		groups = {
+			border = "muted",
+			link = "iris",
+			panel = "surface",
+			error = "love",
+			hint = "iris",
+			info = "foam",
+			note = "pine",
+			todo = "rose",
+			warn = "gold",
+			git_add = "foam",
+			git_change = "rose",
+			git_delete = "love",
+			git_dirty = "rose",
+			git_ignore = "muted",
+			git_merge = "iris",
+			git_rename = "pine",
+			git_stage = "iris",
+			git_text = "rose",
+			git_untracked = "subtle",
+			headings = {
+				h1 = "iris",
+				h2 = "foam",
+				h3 = "rose",
+				h4 = "gold",
+				h5 = "pine",
+				h6 = "foam",
+			},
+		},
+		palette = {
+			-- Override the builtin palette per variant
+			-- moon = {
+			--     base = '#18191a',
+			--     overlay = '#363738',
+			-- },
+		},
+		highlight_groups = {
+			-- Comment = { fg = "foam" },
+			-- VertSplit = { fg = "muted", bg = "muted" },
+		},
+		before_highlight = function(group, highlight, palette)
+			-- Disable all undercurls
+			-- if highlight.undercurl then
+			--     highlight.undercurl = false
+			-- end
+			--
+			-- Change palette colour
+			-- if highlight.fg == palette.pine then
+			--     highlight.fg = palette.foam
+			-- end
+		end,
+	})
+end
 
-if pcall(require, "tokyonight") then
+if pcall(require, "rose-pine") then
+	vim.cmd.colorscheme "rose-pine-main"
+elseif pcall(require, "tokyonight") then
 	vim.cmd.colorscheme "tokyonight"
 end
 
