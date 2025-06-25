@@ -7,11 +7,22 @@ return {
       'williamboman/mason.nvim',
       -- 'nvim-java/nvim-java',
       'williamboman/mason-lspconfig.nvim',
+      'j-hui/fidget.nvim',
       {
-        'j-hui/fidget.nvim',
-        tag = "legacy",
+        'folke/lazydev.nvim',
+        ft = 'lua',
+        opts = {
+          library = {
+            { path = 'luvit-meta/library', words = { 'vim%.uv' } },
+          },
+        },
       },
-      'folke/neodev.nvim',
+      { 'Bilal2453/luvit-meta', lazy = true },
+      'b0o/schemastore.nvim',
+      {
+        'mfussenegger/nvim-jdtls',
+        ft = { 'java' },
+      },
     },
   },
 
@@ -43,17 +54,13 @@ return {
   -- },
   --
   -- "zbirenbaum/copilot.lua",
-  -- "github/copilot.vim",
+  "github/copilot.vim",
 
-  {
+  --[[ {
     "supermaven-inc/supermaven-nvim",
     config = function()
       require("supermaven-nvim").setup({})
     end
   },
-
-  {
-    "simrat39/rust-tools.nvim",
-    ft = { "rust", "toml" },
-  },
+]]
 }
