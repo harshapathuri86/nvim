@@ -105,11 +105,11 @@ vim.api.nvim_create_autocmd("InsertLeave", {
     end,
 }) ]]
 
--- buf_enter_group = vim.api.nvim_create_augroup("buf_enter", { clear = true })
--- vim.api.nvim_create_autocmd("BufEnter", {
---     pattern = "*",
---     group = buf_enter_group,
---     callback = function()
---         vim.opt_local.formatoptions:remove({ "c", "r", "o" })
---     end,
--- })
+buf_enter_group = vim.api.nvim_create_augroup("buf_enter", { clear = true })
+vim.api.nvim_create_autocmd("BufEnter", {
+    pattern = "*",
+    group = buf_enter_group,
+    callback = function()
+        vim.opt_local.formatoptions:remove({ "c", "r", "o" })
+    end,
+})
