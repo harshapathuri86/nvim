@@ -52,6 +52,7 @@ require('gitsigns').setup {
     interval = 2000,
     follow_files = true,
   },
+  worktrees = vim.g.git_worktrees,
   attach_to_untracked = false,
   current_line_blame = true,
   current_line_blame_opts = {
