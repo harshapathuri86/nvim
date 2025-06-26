@@ -9,9 +9,49 @@ return {
 	},
 
 	'tpope/vim-fugitive',
-	'tpope/vim-surround',
+	{
+		'kylechui/nvim-surround',
+		version = '*',
+		config = function()
+			require('nvim-surround').setup({})
+		end,
+	},
 	'tpope/vim-sleuth',
 	"mbbill/undotree",
+
+	{
+		"ThePrimeagen/harpoon",
+		branch = "harpoon2",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			local harpoon = require("harpoon")
+			harpoon:setup()
+			vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+			vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+			vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end)
+			vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
+			vim.keymap.set("n", "<leader>3", function() harpoon:list():select(3) end)
+			vim.keymap.set("n", "<leader>4", function() harpoon:list():select(4) end)
+		end,
+	},
+
+	{
+		"christoomey/vim-tmux-navigator",
+		cmd = {
+			"TmuxNavigateLeft",
+			"TmuxNavigateDown",
+			"TmuxNavigateUp",
+			"TmuxNavigateRight",
+			"TmuxNavigatePrevious",
+		},
+		keys = {
+			{ "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
+			{ "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
+			{ "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
+			{ "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
+			{ "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
+		},
+	},
 
 	{ 'numToStr/Comment.nvim',   opts = {} },
 
@@ -194,44 +234,18 @@ return {
 	},
 
 
-	-- {
-	-- 	"folke/flash.nvim",
-	-- 	event = "VeryLazy",
-	-- 	---@type Flash.Config
-	-- 	opts = {},
-	-- 	-- stylua: ignore
-	-- 	keys = {
-	-- 		{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-	-- 		{
-	-- 			"S",
-	-- 			mode = { "n", "x", "o" },
-	-- 			function() require("flash").treesitter() end,
-	-- 			desc =
-	-- 			"Flash Treesitter"
-	-- 		},
-	-- 		{
-	-- 			"r",
-	-- 			mode = "o",
-	-- 			function() require("flash").remote() end,
-	-- 			desc =
-	-- 			"Remote Flash"
-	-- 		},
-	-- 		{
-	-- 			"R",
-	-- 			mode = { "o", "x" },
-	-- 			function() require("flash").treesitter_search() end,
-	-- 			desc =
-	-- 			"Treesitter Search"
-	-- 		},
-	-- 		{
-	-- 			"<c-s>",
-	-- 			mode = { "c" },
-	-- 			function() require("flash").toggle() end,
-	-- 			desc =
-	-- 			"Toggle Flash Search"
-	-- 		},
-	-- 	},
-	-- },
+	{
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		opts = {},
+		keys = {
+			{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+			{ "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+			{ "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+			{ "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+			{ "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+		},
+	},
 
 	{
 		"folke/todo-comments.nvim",
