@@ -17,10 +17,11 @@ return {
   -- Mason's binary rewrites lines that `mvn spotless:apply` then puts back --
   -- endless formatting churn in diffs.
   --
-  -- ~/.local/bin/gjf-spotless reads <googleJavaFormat><version> out of the
-  -- nearest pom.xml and runs that exact jar from ~/.m2 (on a JDK 17, since gjf
-  -- <=1.16 touches javac internals that moved in 21). It falls back to Mason's
-  -- binary when a project pins nothing.
+  -- bin/gjf-spotless (shipped in this repo, so a fresh clone is self-contained)
+  -- reads <googleJavaFormat><version> out of the nearest pom.xml and runs that
+  -- exact jar from ~/.m2 (on a JDK 17, since gjf <=1.16 touches javac internals
+  -- that moved in 21). It falls back to Mason's binary when a project pins
+  -- nothing.
   {
     "stevearc/conform.nvim",
     opts = function(_, opts)
@@ -29,7 +30,7 @@ return {
 
       opts.formatters = opts.formatters or {}
       opts.formatters["gjf-spotless"] = {
-        command = vim.fn.expand("~/.local/bin/gjf-spotless"),
+        command = vim.fn.stdpath("config") .. "/bin/gjf-spotless",
         stdin = true,
         -- Run from the maven root so the script finds the right pom.xml.
         cwd = require("conform.util").root_file({ "pom.xml" }),

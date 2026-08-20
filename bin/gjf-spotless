@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+# gjf-spotless -- format Java with the exact google-java-format version that the
+# project's spotless-maven-plugin pins, so editor formatting matches
+# `mvn spotless:apply` byte for byte.
+#
+# Reads source on stdin, writes formatted source on stdout.
+#
+# Mason (and most package managers) ship the newest google-java-format, but gjf
+# changes its line-wrapping between releases -- notably `case X ->` arrow bodies
+# after 1.15. Formatting on save with a version the build does not use produces
+# diffs that `mvn spotless:apply` immediately undoes.
+#
+# Projects that pin nothing fall back to whatever google-java-format is around.
+#
+# Overrides: GJF_M2_REPO (maven repo path), GJF_JAVA (java binary to run gjf on).
+
+set -euo pipefail
+
+M2="${GJF_M2_REPO:-$HOME/.m2/repository}"
+DATA="${XDG_DATA_HOME:-$HOME/.local/share}"
+
+fallback() {
+  if command -v google-java-format >/dev/null 2>&1; then
+    exec google-java-format -
+  fi
+  # Mason only exports its bin dir inside nvim, so look there directly too.
+  for c in "$DATA/nvim/mason/bin/google-java-format"; do
+    [ -x "$c" ] && exec "$c" -
+  done
+  echo "gjf-spotless: no pinned version and no google-java-format available" >&2
+  exit 1
+}
+
+# Walk up for a pom.xml so this works from a subdirectory or a plain shell pipe,
+# not just from the root that the editor happens to pass as cwd.
+find_pom() {
+  local d="$PWD"
+  while [ "$d" != "/" ]; do
+    if [ -f "$d/pom.xml" ]; then printf '%s\n' "$d/pom.xml"; return 0; fi
+    d="$(dirname "$d")"
+  done
+  return 1
+}
+
+pom="$(find_pom)" || fallback
+
+# Pull <version> out of the spotless <googleJavaFormat> block. awk keeps this
+# dependency-free -- no python/xmllint needed on a fresh machine.
+ver="$(awk '
+  { doc = doc $0 " " }
+  END {
+    if (match(doc, /<googleJavaFormat>.*<\/googleJavaFormat>/)) {
+      seg = substr(doc, RSTART, RLENGTH)
+      if (match(seg, /<version>[ \t]*[0-9][0-9.]*[ \t]*<\/version>/)) {
+        v = substr(seg, RSTART, RLENGTH)
+        gsub(/<\/?version>|[ \t]/, "", v)
+        print v
+      }
+    }
+  }
+' "$pom")"
+
+[ -n "$ver" ] || fallback
+
+jar="$M2/com/google/googlejavaformat/google-java-format/$ver/google-java-format-$ver.jar"
+if [ ! -f "$jar" ]; then
+  echo "gjf-spotless: $jar not found -- run 'mvn spotless:apply' once to fetch it" >&2
+  exit 1
+fi
+
+# guava is gjf's only runtime dependency outside the JDK.
+guava="$(ls -1 "$M2"/com/google/guava/guava/*/guava-*-jre.jar 2>/dev/null | sort -V | tail -1)"
+if [ -z "$guava" ]; then
+  echo "gjf-spotless: no guava jar under $M2" >&2
+  exit 1
+fi
+
+# gjf <=1.16 calls javac internals that moved in JDK 21, so those versions need a
+# 17 JDK even when the system default is newer. Check the usual install spots.
+pick_java17() {
+  [ -n "${GJF_JAVA:-}" ] && { printf '%s\n' "$GJF_JAVA"; return; }
+  [ -n "${JAVA_17_HOME:-}" ] && [ -x "$JAVA_17_HOME/bin/java" ] && { printf '%s\n' "$JAVA_17_HOME/bin/java"; return; }
+  if [ -x /usr/libexec/java_home ]; then
+    h="$(/usr/libexec/java_home -v 17 2>/dev/null || true)"
+    [ -n "$h" ] && [ -x "$h/bin/java" ] && { printf '%s\n' "$h/bin/java"; return; }
+  fi
+  for c in \
+    "$HOME"/.sdkman/candidates/java/17.*/bin/java \
+    "$HOME"/.asdf/installs/java/*17*/bin/java \
+    /opt/homebrew/opt/openjdk@17/bin/java \
+    /usr/local/opt/openjdk@17/bin/java \
+    /usr/lib/jvm/java-17-*/bin/java
+  do
+    [ -x "$c" ] && { printf '%s\n' "$c"; return; }
+  done
+  printf 'java\n'
+}
+
+java_bin="${GJF_JAVA:-java}"
+if [ "$(printf '%s\n1.16\n' "$ver" | sort -V | tail -1)" = "1.16" ]; then
+  java_bin="$(pick_java17)"
+fi
+
+exec "$java_bin" \
+  --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
+  --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED \
+  --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED \
+  --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED \
+  --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED \
+  -cp "$jar:$guava" com.google.googlejavaformat.java.Main -
